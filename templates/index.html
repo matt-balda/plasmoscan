@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>PlasmoScan — Leitura assistida por IA para malária</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230b1220'/%3E%3Ccircle cx='11' cy='11' r='6' fill='none' stroke='%235b93ff' stroke-width='2'/%3E%3Cline x1='19' y1='19' x2='15.5' y2='15.5' stroke='%235b93ff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Cabeçalho de marca — persistente nas 5 telas -->
+  <header class="brand-bar">
+    <span class="brand-mark" aria-hidden="true">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </span>
+    <div class="brand-text">
+      <span class="brand-name">PlasmoScan</span>
+      <span class="brand-tagline">Leitura assistida por IA para lâminas de malária</span>
+    </div>
+  </header>
+
+  <!-- ===================== TELA 1: INICIAL / ATRAÇÃO ===================== -->
+  <section id="view-home" class="view view-active">
+    <div class="home-glow" aria-hidden="true"></div>
+
+    <div class="home-content">
+      <div class="home-badge">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="9.5" y1="11.5" x2="14.5" y2="11.5"/></svg>
+        <span>Demonstração de pesquisa &middot; Visão Computacional</span>
+      </div>
+      <h1 class="home-title">Leitura assistida por IA para lâminas de malária</h1>
+      <p class="home-subtitle">
+        O PlasmoScan usa um modelo de visão computacional (YOLOv8) para localizar hemácias e
+        identificar os estágios do parasita <em>Plasmodium</em> — o causador da malária — em
+        imagens de microscopia, em tempo real. Experimente com uma foto ou com a câmera ao vivo.
+      </p>
+
+      <div class="home-actions">
+        <button id="btn-camera" class="btn btn-primary btn-huge" type="button">
+          <span class="btn-icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.5"/></svg>
+          </span>
+          <span>Usar câmera ao vivo</span>
+        </button>
+        <button id="btn-upload" class="btn btn-secondary btn-huge" type="button">
+          <span class="btn-icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5.5-5.5a1 1 0 0 0-1.4 0L4 20"/></svg>
+          </span>
+          <span>Enviar uma imagem</span>
+        </button>
+      </div>
+
+      <div id="samples-section" class="samples-section" hidden>
+        <p class="samples-label">ou experimente uma amostra:</p>
+        <div id="samples-gallery" class="samples-gallery"></div>
+      </div>
+    </div>
+
+    <footer class="home-footer">
+      <div class="legal-notice">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
+        <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ===================== TELA 2: UPLOAD ===================== -->
+  <section id="view-upload" class="view">
+    <div class="view-topbar">
+      <button id="btn-upload-back" class="btn btn-ghost" type="button">
+        <span aria-hidden="true">←</span> Voltar
+      </button>
+    </div>
+
+    <div class="upload-wrap">
+      <h2 class="section-title">Enviar uma imagem de microscopia</h2>
+      <p class="section-subtitle">Arraste um arquivo para a área abaixo ou toque para escolher da galeria.</p>
+
+      <label id="dropzone" class="dropzone" for="file-input" tabindex="0">
+        <div class="dropzone-icon" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
+        </div>
+        <div class="dropzone-title">Arraste uma imagem aqui</div>
+        <div class="dropzone-sub">ou toque para selecionar um arquivo (JPG, PNG)</div>
+        <input id="file-input" type="file" accept="image/*" hidden>
+      </label>
+
+      <button id="link-upload-folder" class="upload-folder-link" type="button">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
+        <span>ou selecione uma pasta com várias lâminas (lote)</span>
+      </button>
+      <p id="upload-batch-status" class="upload-batch-status" hidden></p>
+      <input id="folder-input" type="file" accept="image/*" webkitdirectory directory multiple hidden>
+
+      <div class="legal-notice-condensed">
+        <div class="legal-notice">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
+          <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TELA 3/4: ANÁLISE (upload estático OU câmera ao vivo) ===================== -->
+  <section id="view-analysis" class="view">
+    <div class="view-topbar">
+      <button id="btn-new-analysis" class="btn btn-ghost" type="button">
+        <span aria-hidden="true">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+        </span>
+        Nova análise
+      </button>
+      <div class="topbar-badges">
+        <span id="badge-live" class="badge badge-live" hidden><span class="live-dot"></span> AO VIVO</span>
+        <span id="badge-inference" class="badge badge-time" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 4 14 11 14 10 22 20 9 13 9"/></svg>
+          <span id="badge-inference-value">— ms</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+
+      <!-- Palco da mídia (imagem ou vídeo) + overlay de detecções -->
+      <div class="media-panel">
+        <div id="media-stage" class="media-stage">
+          <div id="zoom-layer" class="zoom-layer">
+            <img id="result-image" class="media-el" alt="Imagem de microscopia analisada" draggable="false" hidden>
+            <video id="camera-video" class="media-el" autoplay playsinline muted hidden></video>
+            <canvas id="overlay-canvas" class="overlay-canvas"></canvas>
+          </div>
+
+          <div class="stage-corner-bl" aria-hidden="true"></div>
+          <div class="stage-corner-br" aria-hidden="true"></div>
+
+          <div id="stage-placeholder" class="stage-placeholder" hidden>
+            <div class="spinner" aria-hidden="true"></div>
+            <p id="stage-placeholder-text">Solicitando acesso à câmera…</p>
+          </div>
+
+          <div id="stage-error" class="stage-error" hidden>
+            <div class="stage-error-icon" aria-hidden="true">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
+            </div>
+            <p id="stage-error-text">Não foi possível acessar a câmera.</p>
+            <button id="btn-stage-error-back" class="btn btn-secondary" type="button">← Voltar ao início</button>
+          </div>
+
+          <div id="zoom-hint" class="zoom-hint" hidden>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+            <span>Arraste para mover · role ou belisque para dar zoom</span>
+          </div>
+
+          <div id="zoom-controls" class="zoom-controls" hidden>
+            <span id="zoom-badge" class="zoom-badge">1,0x</span>
+            <button id="btn-zoom-reset" class="zoom-reset-btn" type="button" title="Restaurar zoom" aria-label="Restaurar zoom">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Painel lateral de resultados -->
+      <aside class="result-panel">
+
+        <div id="predict-error-banner" class="error-banner" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
+          <span id="predict-error-text"></span>
+        </div>
+
+        <div class="panel-card infection-card">
+          <div class="infection-label-row">
+            <span class="infection-label">Taxa de infecção estimada</span>
+            <span id="infection-severity" class="severity-chip">—</span>
+          </div>
+          <div id="infection-rate" class="infection-rate">—</div>
+          <div class="infection-gauge"><div id="infection-gauge-marker" class="infection-gauge-marker"></div></div>
+          <div class="infection-note">*Estimativa automática: parasitados ÷ hemácias detectadas. Não substitui diagnóstico clínico.</div>
+        </div>
+
+        <div class="panel-card">
+          <div class="detection-controls-title">Controles de detecção</div>
+
+          <div class="detection-controls-row">
+            <label class="switch-row" for="toggle-rbc">
+              <span class="switch">
+                <input id="toggle-rbc" type="checkbox">
+                <span class="switch-slider"></span>
+              </span>
+              <span>Mostrar hemácias (glóbulos vermelhos)</span>
+            </label>
+          </div>
+
+          <div class="detection-controls-row">
+            <div style="width:100%">
+              <div class="slider-row">
+                <label for="conf-slider">Sensibilidade de detecção (confiança mínima)</label>
+                <span id="conf-value" class="slider-value">0.25</span>
+              </div>
+              <div class="slider-wrap">
+                <input id="conf-slider" class="slider" type="range" min="0.1" max="0.9" step="0.05" value="0.25">
+                <div class="slider-ticks" aria-hidden="true">
+                  <span class="slider-tick" style="left:18.75%"><span>0,25</span></span>
+                  <span class="slider-tick" style="left:50%"><span>0,50</span></span>
+                  <span class="slider-tick" style="left:81.25%"><span>0,75</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="chips-title">Classes detectadas</div>
+          <div id="chips-container" class="chips-container">
+            <p class="chips-empty">Nenhuma detecção ainda.</p>
+          </div>
+        </div>
+
+        <div id="description-card" class="panel-card description-card">
+          <p class="description-placeholder">Toque em uma classe acima para saber mais sobre ela.</p>
+        </div>
+
+        <div class="legal-notice-condensed">
+          <div class="legal-notice">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
+            <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== TELA LOTE: CORREÇÃO DA PROPOSTA DA IA ===================== -->
+  <section id="view-batch-annotate" class="view">
+    <div class="view-topbar">
+      <button id="btn-batch-annotate-cancel" class="btn btn-ghost" type="button">Cancelar lote</button>
+      <div class="topbar-badges">
+        <span id="annotate-progress-badge" class="badge"></span>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="media-panel">
+        <div id="annotate-stage" class="media-stage annotate-stage">
+          <img id="annotate-image" class="media-el" alt="Lâmina com a proposta de detecção da IA para o especialista corrigir" draggable="false">
+          <canvas id="annotate-canvas" class="overlay-canvas"></canvas>
+          <div class="stage-corner-bl" aria-hidden="true"></div>
+          <div class="stage-corner-br" aria-hidden="true"></div>
+          <div id="annotate-loading" class="stage-placeholder" hidden>
+            <div class="spinner" aria-hidden="true"></div>
+            <p>A IA está analisando a lâmina…</p>
+          </div>
+          <div class="annotate-legend" aria-hidden="true">
+            <span class="annotate-legend-swatch"><span class="annotate-legend-line dashed"></span> proposta da IA</span>
+            <span class="annotate-legend-swatch"><span class="annotate-legend-line"></span> confirmado</span>
+          </div>
+        </div>
+        <p class="annotate-hint">
+          As caixas pontilhadas foram propostas pela IA. Clique numa caixa para ver e corrigir a classe dela,
+          apague as erradas, ou arraste sobre a imagem para desenhar uma nova (escolha a classe ao lado antes).
+        </p>
+      </div>
+
+      <aside class="result-panel">
+        <div class="panel-card">
+          <div id="annotate-picker-title" class="chips-title">Classe para a próxima caixa</div>
+          <div id="annotate-class-picker" class="chips-container"></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="chips-title">Caixas confirmadas (<span id="annotate-count">0</span>)</div>
+          <div id="annotate-list" class="annotate-list">
+            <p class="chips-empty">Aguardando a proposta da IA…</p>
+          </div>
+        </div>
+
+        <div class="annotate-actions">
+          <button id="btn-annotate-skip" class="btn btn-secondary" type="button">Não avaliar esta lâmina</button>
+          <button id="btn-annotate-save" class="btn btn-primary" type="button">Confirmar correção e continuar →</button>
+        </div>
+
+        <div class="legal-notice-condensed">
+          <div class="legal-notice">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
+            <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== TELA LOTE: RELATÓRIO FINAL ===================== -->
+  <section id="view-batch-report" class="view">
+    <div class="view-topbar">
+      <button id="btn-report-home" class="btn btn-ghost" type="button">
+        <span aria-hidden="true">←</span> Início
+      </button>
+    </div>
+
+    <div class="report-wrap">
+      <h2 class="section-title">Relatório do lote</h2>
+      <p id="report-slides-count" class="section-subtitle">0 lâminas analisadas</p>
+
+      <!-- Diagnóstico validado: figura principal, full-width — é o gabarito -->
+      <div class="panel-card report-gt-card">
+        <div class="report-col-title">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/></svg>
+          Diagnóstico validado
+        </div>
+        <span id="report-gt-rate" class="report-gt-figure">—</span>
+        <span class="report-gt-figure-label">Taxa de infecção (gabarito, após correção do especialista)</span>
+        <div class="report-substats">
+          <div><span id="report-gt-rbc">0</span>hemácias</div>
+          <div><span id="report-gt-infected">0</span>parasitas</div>
+          <div><span id="report-gt-n">0</span>lâminas revisadas</div>
+        </div>
+      </div>
+
+      <div class="report-connector" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="4" x2="12" y2="18"/><polyline points="7 13 12 18 17 13"/></svg>
+        <span>desempenho da IA, medido contra este gabarito</span>
+      </div>
+
+      <!-- Desempenho da IA: leitura subordinada, avaliada contra o gabarito acima -->
+      <div class="panel-card report-ai-card">
+        <div class="report-col-title">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/><line x1="12" y1="2" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="2" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22" y2="12"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Desempenho da IA
+        </div>
+        <p class="report-ai-note">Avaliado em <span id="report-ai-n">0</span> lâminas contra o gabarito acima.</p>
+        <div class="report-ai-stats">
+          <div class="report-ai-stat"><span id="report-ai-precision" class="report-ai-stat-value">—</span><span class="report-ai-stat-label">Precisão</span></div>
+          <div class="report-ai-stat"><span id="report-ai-recall" class="report-ai-stat-value">—</span><span class="report-ai-stat-label">Revocação</span></div>
+          <div class="report-ai-stat"><span id="report-ai-f1" class="report-ai-stat-value">—</span><span class="report-ai-stat-label">F1</span></div>
+        </div>
+        <div class="report-ai-breakdown">
+          <div class="stat-tp"><span id="report-ai-tp">0</span>acertos (VP)</div>
+          <div class="stat-fp"><span id="report-ai-fp">0</span>falso-positivos</div>
+          <div class="stat-fn"><span id="report-ai-fn">0</span>omissões</div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="chips-title">Por lâmina</div>
+        <div id="report-table-wrap" class="report-table-wrap"></div>
+      </div>
+
+      <div class="report-actions">
+        <button id="btn-report-new-batch" class="btn btn-primary btn-huge" type="button">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
+          <span>Novo lote</span>
+        </button>
+      </div>
+
+      <div class="legal-notice-condensed">
+        <div class="legal-notice">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
+          <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<canvas id="capture-canvas" hidden></canvas>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

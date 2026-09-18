@@ -1,0 +1,29 @@
+[
+  {
+    "file": "sample_1.jpg",
+    "caption_pt": "Esfregaço fino corado com Giemsa — hemácias e células infectadas em diferentes formatos"
+  },
+  {
+    "file": "sample_2.jpg",
+    "caption_pt": "Campo com hemácias em equinócitos e possíveis estágios do parasita coradas em roxo"
+  },
+  {
+    "file": "sample_3.jpg",
+    "caption_pt": "Amostra de microscopia com uma célula infectada destacada entre as hemácias saudáveis"
+  },
+  {
+    "file": "sample_4.jpg",
+    "caption_pt": "Múltiplos pontos de cromatina compatíveis com estágios em anel espalhados pelo campo — bom teste para detecção de múltiplos alvos pequenos",
+    "source": "BBBC041 (Broad Bioimage Benchmark Collection)"
+  },
+  {
+    "file": "sample_5.jpg",
+    "caption_pt": "Inclusões parasitárias maiores e mais densas, sugerindo estágios mais avançados do ciclo do Plasmodium",
+    "source": "BBBC041 (Broad Bioimage Benchmark Collection)"
+  },
+  {
+    "file": "sample_6.jpg",
+    "caption_pt": "Células com citoplasma parasitário volumoso ao lado de um estágio inicial menor — bom contraste de tamanhos para a demo",
+    "source": "BBBC041 (Broad Bioimage Benchmark Collection)"
+  }
+]
