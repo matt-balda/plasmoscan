@@ -258,12 +258,12 @@ svg.icon {
 .home-logo {
   display: block;
   max-width: none;
-  height: clamp(4.4rem, 8.5vw, 7.2rem);
+  height: clamp(2.4rem, 1.7rem + 1.4vw, 3.6rem);
   width: auto;
 }
 
 .home-logo-ciars {
-  height: clamp(3.9rem, 7.5vw, 6.4rem);
+  height: clamp(2.1rem, 1.5rem + 1.2vw, 3.2rem);
   border-radius: 10px;
 }
 
@@ -277,8 +277,8 @@ svg.icon {
 
 .home-qr-code {
   display: block;
-  height: clamp(6rem, 10.5vw, 8rem);
-  width: clamp(6rem, 10.5vw, 8rem);
+  height: clamp(3.6rem, 2.6rem + 2vw, 4.8rem);
+  width: clamp(3.6rem, 2.6rem + 2vw, 4.8rem);
   border-radius: 8px;
   background: #fff;
   padding: 5px;
@@ -329,7 +329,7 @@ svg.icon {
 .home-content {
   position: relative;
   z-index: 1;
-  max-width: 920px;
+  max-width: clamp(920px, 82vw, 1200px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -408,7 +408,7 @@ svg.icon {
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  max-width: 900px;
+  max-width: 100%;
   margin: 0 auto;
 }
 

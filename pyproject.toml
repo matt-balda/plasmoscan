@@ -10,20 +10,41 @@ dependencies = [
     "numpy>=1.26",
     "opencv-python-headless>=4.9",
     "pillow>=10.0",
-    "torch>=2.2",
-    "torchvision",
     "ultralytics>=8.2",
 ]
 
 [tool.uv]
 package = false
 
-# Torch CPU-only: o índice padrão do PyPI traz build com CUDA (vários GB)
-# mesmo sem GPU disponível, o que deixa o ambiente enorme e a resolução/
-# instalação lentas à toa.
+# Torch/torchvision não entram nas dependências base: a variante certa (CPU
+# ou GPU) depende da máquina que roda o instalador, então elas ficam em
+# extras mutuamente exclusivos escolhidos pelo scripts/install.sh, que
+# detecta uma GPU NVIDIA (via nvidia-smi) e chama `uv sync --extra gpu` ou
+# `uv sync --extra cpu`. Rodar `uv sync` puro (sem extra) não instala torch.
+conflicts = [
+    [
+        { extra = "cpu" },
+        { extra = "gpu" },
+    ],
+]
+
+[project.optional-dependencies]
+# CPU-only: o índice padrão do PyPI traz build com CUDA (vários GB) mesmo
+# sem GPU disponível, o que deixa o ambiente enorme e a instalação lenta.
+cpu = [
+    "torch>=2.2",
+    "torchvision",
+]
+# GPU: usa o índice padrão do PyPI, cujo wheel de torch/torchvision já traz
+# suporte a CUDA e detecta a GPU disponível em tempo de execução.
+gpu = [
+    "torch>=2.2",
+    "torchvision",
+]
+
 [tool.uv.sources]
-torch = [{ index = "pytorch-cpu" }]
-torchvision = [{ index = "pytorch-cpu" }]
+torch = [{ index = "pytorch-cpu", extra = "cpu" }]
+torchvision = [{ index = "pytorch-cpu", extra = "cpu" }]
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
