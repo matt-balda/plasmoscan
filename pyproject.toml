@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "flask>=3.0",
+    "gunicorn>=26.2.0",
     "numpy>=1.26",
     "opencv-python-headless>=4.9",
     "pillow>=10.0",
