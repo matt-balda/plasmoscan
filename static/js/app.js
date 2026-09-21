@@ -498,7 +498,16 @@
     showStagePlaceholder("Solicitando acesso à câmera…");
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      showStageError("Este navegador não tem suporte para acesso à câmera.");
+      // navigator.mediaDevices só existe em contexto seguro (HTTPS, ou
+      // http://localhost/127.0.0.1). Ao acessar pelo IP da rede local em
+      // HTTP puro — como o próprio servidor Flask sugere ao subir em
+      // 0.0.0.0 — o navegador nem expõe a API, e cai aqui mesmo com câmera
+      // e permissões OK. Mensagem genérica de "sem suporte" só se aplica
+      // de fato em contexto seguro.
+      var msg = window.isSecureContext
+        ? "Este navegador não tem suporte para acesso à câmera."
+        : "A câmera exige uma conexão segura. Acesse por http://localhost:" + location.port + " neste computador, ou configure HTTPS para usar a câmera de outro dispositivo na rede.";
+      showStageError(msg);
       els.badgeLive.hidden = true;
       return;
     }
@@ -752,7 +761,7 @@
 
     els.annotateClassPicker.innerHTML = "";
     DRAW_ORDER.forEach(function (name) {
-      var color = CLASS_COLORS[name] || "#5B93FF";
+      var color = CLASS_COLORS[name] || "#146674";
       var chip = document.createElement("button");
       chip.type = "button";
       chip.className = "chip";
@@ -828,7 +837,7 @@
 
       var dot = document.createElement("span");
       dot.className = "chip-dot";
-      dot.style.background = CLASS_COLORS[b.class_name] || "#5B93FF";
+      dot.style.background = CLASS_COLORS[b.class_name] || "#146674";
 
       var label = document.createElement("span");
       label.className = "annotate-row-label";
@@ -1007,7 +1016,7 @@
     var y1 = layout.offsetY + box[1] * layout.scaleY;
     var x2 = layout.offsetX + box[2] * layout.scaleX;
     var y2 = layout.offsetY + box[3] * layout.scaleY;
-    var color = CLASS_COLORS[det.class_name] || "#5B93FF";
+    var color = CLASS_COLORS[det.class_name] || "#146674";
 
     // Caixas propostas pela IA e ainda não tocadas ficam pontilhadas mais
     // finas, para o especialista ver de relance o que ele mesmo confirmou/
@@ -1439,7 +1448,7 @@
     var w = x2 - x1;
     var h = y2 - y1;
 
-    var color = CLASS_COLORS[det.class_name] || "#5B93FF";
+    var color = CLASS_COLORS[det.class_name] || "#146674";
     var isDifficult = det.class_name === "difficult";
     var isSelected = state.selectedClass === det.class_name;
 
@@ -1496,7 +1505,7 @@
   // a legibilidade em classes com preenchimento mais saturado/escuro
   // (ex.: schizont roxo, gametocyte azul).
   function labelTextColorFor(hex) {
-    return relativeLuminance(hex) > 0.5 ? "#0b1220" : "#ffffff";
+    return relativeLuminance(hex) > 0.5 ? "#12262b" : "#ffffff";
   }
 
   function relativeLuminance(hex) {
@@ -1760,7 +1769,7 @@
     }
 
     entries.forEach(function (entry) {
-      var color = CLASS_COLORS[entry.name] || "#5B93FF";
+      var color = CLASS_COLORS[entry.name] || "#146674";
       var chip = document.createElement("button");
       chip.type = "button";
       chip.className = "chip";
@@ -1802,7 +1811,7 @@
       return;
     }
     var name = state.selectedClass;
-    var color = CLASS_COLORS[name] || "#5B93FF";
+    var color = CLASS_COLORS[name] || "#146674";
     var label = CLASS_LABELS_PT[name] || name;
     var text = CLASS_DESCRIPTIONS_PT[name] || "";
 

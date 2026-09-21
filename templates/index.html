@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>PlasmoScan — Leitura assistida por IA para malária</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230b1220'/%3E%3Ccircle cx='11' cy='11' r='6' fill='none' stroke='%235b93ff' stroke-width='2'/%3E%3Cline x1='19' y1='19' x2='15.5' y2='15.5' stroke='%235b93ff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>PlasmoScan</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2312262b'/%3E%3Ccircle cx='11' cy='11' r='6' fill='none' stroke='%23146674' stroke-width='2'/%3E%3Cline x1='19' y1='19' x2='15.5' y2='15.5' stroke='%23146674' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -29,15 +29,26 @@
   <section id="view-home" class="view view-active">
     <div class="home-glow" aria-hidden="true"></div>
 
+    <div class="home-logos-wrap">
+      <div class="home-logos">
+        <img class="home-logo home-logo-mlab" src="/static/img/logo-mlab.png" alt="MLAB — Machine Learning & Applications in Biomedical Data Lab">
+        <img class="home-logo home-logo-ciars" src="/static/img/logo-ciars.png" alt="CIARS">
+      </div>
+      <a class="home-qr" href="/static/img/artigo-sbcas.png" target="_blank" rel="noopener">
+        <img class="home-qr-code" src="/static/img/artigo-sbcas.png" alt="QR code para o artigo desta pesquisa">
+        <span class="home-qr-label">Artigo desta pesquisa</span>
+      </a>
+    </div>
+
     <div class="home-content">
       <div class="home-badge">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="9.5" y1="11.5" x2="14.5" y2="11.5"/></svg>
-        <span>Demonstração de pesquisa &middot; Visão Computacional</span>
+        <span>Demonstração de pesquisa</span>
       </div>
       <h1 class="home-title">Leitura assistida por IA para lâminas de malária</h1>
       <p class="home-subtitle">
         O PlasmoScan usa um modelo de visão computacional (YOLOv8) para localizar hemácias e
-        identificar os estágios do parasita <em>Plasmodium</em> — o causador da malária — em
+        identificar os estágios do parasita <em>Plasmodium</em>, o causador da malária, em
         imagens de microscopia, em tempo real. Experimente com uma foto ou com a câmera ao vivo.
       </p>
 
@@ -65,7 +76,7 @@
     <footer class="home-footer">
       <div class="legal-notice">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
-        <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
+        <span>Protótipo educacional e de pesquisa, não é um dispositivo de diagnóstico clínico e sim auxiliar no diagnóstico para especialistas.</span>
       </div>
     </footer>
   </section>
@@ -97,13 +108,6 @@
       </button>
       <p id="upload-batch-status" class="upload-batch-status" hidden></p>
       <input id="folder-input" type="file" accept="image/*" webkitdirectory directory multiple hidden>
-
-      <div class="legal-notice-condensed">
-        <div class="legal-notice">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
-          <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -226,13 +230,6 @@
           <p class="description-placeholder">Toque em uma classe acima para saber mais sobre ela.</p>
         </div>
 
-        <div class="legal-notice-condensed">
-          <div class="legal-notice">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
-            <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
-          </div>
-        </div>
-
       </aside>
     </div>
   </section>
@@ -286,12 +283,6 @@
           <button id="btn-annotate-save" class="btn btn-primary" type="button">Confirmar correção e continuar →</button>
         </div>
 
-        <div class="legal-notice-condensed">
-          <div class="legal-notice">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
-            <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
-          </div>
-        </div>
       </aside>
     </div>
   </section>
@@ -359,12 +350,6 @@
         </button>
       </div>
 
-      <div class="legal-notice-condensed">
-        <div class="legal-notice">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21.5 20h-19z"/><line x1="12" y1="9.5" x2="12" y2="14"/><line x1="12" y1="16.8" x2="12" y2="17"/></svg>
-          <span>Protótipo educacional e de pesquisa — não é um dispositivo de diagnóstico clínico.</span>
-        </div>
-      </div>
     </div>
   </section>
 
