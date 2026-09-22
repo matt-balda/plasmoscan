@@ -20,28 +20,35 @@ package = false
 # ou GPU) depende da máquina que roda o instalador, então elas ficam em
 # extras mutuamente exclusivos escolhidos pelo scripts/install.sh, que
 # detecta uma GPU NVIDIA (via nvidia-smi) e chama `uv sync --extra gpu` ou
-# `uv sync --extra cpu`. Rodar `uv sync` puro (sem extra) não instala torch.
+# `uv sync --extra cpu`.
+#
+# Atenção: `uv sync` puro (sem extra) AINDA instala torch/torchvision, porque
+# o ultralytics já exige as duas como dependência direta (sem source/versão
+# customizados) — os extras abaixo só existem para trocar o índice e, no caso
+# do macOS Intel, o teto de versão. Por isso o cap abaixo é feito via
+# constraint-dependencies (pega qualquer resolução, com ou sem extra) e não só
+# dentro do extra "cpu".
 conflicts = [
     [
         { extra = "cpu" },
         { extra = "gpu" },
     ],
 ]
+# macOS Intel (x86_64): o PyTorch parou de publicar wheels para essa
+# plataforma a partir da 2.3 (só Apple Silicon/arm64 de lá pra frente), então
+# travamos aqui na última dupla torch/torchvision com wheel macosx_x86_64
+# (2.2.2 / 0.17.2). Linux, Windows e Mac Apple Silicon não são afetados.
+constraint-dependencies = [
+    "torch<=2.2.2; sys_platform == 'darwin' and platform_machine == 'x86_64'",
+    "torchvision<=0.17.2; sys_platform == 'darwin' and platform_machine == 'x86_64'",
+]
 
 [project.optional-dependencies]
 # CPU-only: o índice padrão do PyPI traz build com CUDA (vários GB) mesmo
 # sem GPU disponível, o que deixa o ambiente enorme e a instalação lenta.
-#
-# macOS Intel (x86_64) é caso à parte: o PyTorch parou de publicar wheels
-# para essa plataforma a partir da 2.3 (só Apple Silicon/arm64 de lá pra
-# frente), então travamos na última dupla torch/torchvision com wheel
-# macosx_x86_64 (2.2.2 / 0.17.2). Linux, Windows e Mac Apple Silicon seguem
-# sem teto de versão.
 cpu = [
-    "torch==2.2.2; sys_platform == 'darwin' and platform_machine == 'x86_64'",
-    "torch>=2.2; sys_platform != 'darwin' or platform_machine != 'x86_64'",
-    "torchvision==0.17.2; sys_platform == 'darwin' and platform_machine == 'x86_64'",
-    "torchvision; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    "torch>=2.2",
+    "torchvision",
 ]
 # GPU: usa o índice padrão do PyPI, cujo wheel de torch/torchvision já traz
 # suporte a CUDA e detecta a GPU disponível em tempo de execução.

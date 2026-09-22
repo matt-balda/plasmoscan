@@ -2,21 +2,21 @@ version = 1
 revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
-    "sys_platform == 'win32' and extra != 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu'",
-    "sys_platform == 'win32' and extra == 'extra-10-plasmoscan-cpu' and extra != 'extra-10-plasmoscan-gpu'",
-    "sys_platform == 'win32' and extra != 'extra-10-plasmoscan-cpu' and extra != 'extra-10-plasmoscan-gpu'",
-    "sys_platform != 'darwin' and sys_platform != 'win32' and extra != 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu'",
-    "sys_platform != 'darwin' and sys_platform != 'win32' and extra == 'extra-10-plasmoscan-cpu' and extra != 'extra-10-plasmoscan-gpu'",
-    "sys_platform != 'darwin' and sys_platform != 'win32' and extra != 'extra-10-plasmoscan-cpu' and extra != 'extra-10-plasmoscan-gpu'",
-    "sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu'",
-    "platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra != 'extra-10-plasmoscan-gpu'",
-    "platform_machine != 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra != 'extra-10-plasmoscan-gpu'",
-    "sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu' and extra != 'extra-10-plasmoscan-gpu'",
+    "sys_platform == 'win32'",
+    "sys_platform != 'darwin' and sys_platform != 'win32'",
+    "platform_machine == 'x86_64' and sys_platform == 'darwin'",
+    "platform_machine != 'x86_64' and sys_platform == 'darwin'",
 ]
 conflicts = [[
     { package = "plasmoscan", extra = "cpu" },
     { package = "plasmoscan", extra = "gpu" },
 ]]
+
+[manifest]
+constraints = [
+    { name = "torch", marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'", specifier = "<=2.2.2" },
+    { name = "torchvision", marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'", specifier = "<=0.17.2" },
+]
 
 [[package]]
 name = "anyio"
@@ -1178,8 +1178,10 @@ cpu = [
     { name = "torchvision", version = "0.29.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
 ]
 gpu = [
-    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" } },
-    { name = "torchvision", version = "0.29.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "torch", version = "2.2.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (platform_machine != 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'x86_64' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torchvision", version = "0.17.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (platform_machine != 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torchvision", version = "0.29.0", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'x86_64' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
 ]
 
 [package.metadata]
@@ -1189,11 +1191,9 @@ requires-dist = [
     { name = "numpy", specifier = ">=1.26" },
     { name = "opencv-python-headless", specifier = ">=4.9" },
     { name = "pillow", specifier = ">=10.0" },
-    { name = "torch", marker = "platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'cpu'", specifier = "==2.2.2", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "plasmoscan", extra = "cpu" } },
-    { name = "torch", marker = "(platform_machine != 'x86_64' and extra == 'cpu') or (sys_platform != 'darwin' and extra == 'cpu')", specifier = ">=2.2", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "plasmoscan", extra = "cpu" } },
+    { name = "torch", marker = "extra == 'cpu'", specifier = ">=2.2", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "plasmoscan", extra = "cpu" } },
     { name = "torch", marker = "extra == 'gpu'", specifier = ">=2.2" },
-    { name = "torchvision", marker = "platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'cpu'", specifier = "==0.17.2", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "plasmoscan", extra = "cpu" } },
-    { name = "torchvision", marker = "(platform_machine != 'x86_64' and extra == 'cpu') or (sys_platform != 'darwin' and extra == 'cpu')", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "plasmoscan", extra = "cpu" } },
+    { name = "torchvision", marker = "extra == 'cpu'", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "plasmoscan", extra = "cpu" } },
     { name = "torchvision", marker = "extra == 'gpu'" },
     { name = "ultralytics", specifier = ">=8.2" },
 ]
@@ -1390,6 +1390,29 @@ wheels = [
 
 [[package]]
 name = "torch"
+version = "2.2.2"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "platform_machine == 'x86_64' and sys_platform == 'darwin'",
+]
+dependencies = [
+    { name = "filelock", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "fsspec", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "jinja2", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "networkx", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "sympy", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "typing-extensions", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/0c/d8f77363a7a3350c96e6c9db4ffb101d1c0487cc0b8cdaae1e4bfb2800ad/torch-2.2.2-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:cf12cdb66c9c940227ad647bc9cf5dba7e8640772ae10dfe7569a0c1e2a28aca", size = 755466713, upload-time = "2024-03-27T21:08:48.868Z" },
+    { url = "https://files.pythonhosted.org/packages/05/9b/e5c0df26435f3d55b6699e1c61f07652b8c8a3ac5058a75d0e991f92c2b0/torch-2.2.2-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:89ddac2a8c1fb6569b90890955de0c34e1724f87431cacff4c1979b5f769203c", size = 86515814, upload-time = "2024-03-27T21:09:07.247Z" },
+    { url = "https://files.pythonhosted.org/packages/72/ce/beca89dcdcf4323880d3b959ef457a4c61a95483af250e6892fec9174162/torch-2.2.2-cp312-cp312-win_amd64.whl", hash = "sha256:451331406b760f4b1ab298ddd536486ab3cfb1312614cfe0532133535be60bea", size = 198528804, upload-time = "2024-03-27T21:09:14.691Z" },
+    { url = "https://files.pythonhosted.org/packages/79/78/29dcab24a344ffd9ee9549ec0ab2c7885c13df61cde4c65836ee275efaeb/torch-2.2.2-cp312-none-macosx_10_9_x86_64.whl", hash = "sha256:eb4d6e9d3663e26cd27dc3ad266b34445a16b54908e74725adb241aa56987533", size = 150797270, upload-time = "2024-03-27T21:08:29.623Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/0e/e4e033371a7cba9da0db5ccb507a9174e41b9c29189a932d01f2f61ecfc0/torch-2.2.2-cp312-none-macosx_11_0_arm64.whl", hash = "sha256:bf9558da7d2bf7463390b3b2a61a6a3dbb0b45b161ee1dd5ec640bf579d479fc", size = 59678388, upload-time = "2024-03-27T21:08:35.869Z" },
+]
+
+[[package]]
+name = "torch"
 version = "2.14.0"
 source = { registry = "https://download.pytorch.org/whl/cpu" }
 resolution-markers = [
@@ -1420,23 +1443,23 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "sys_platform == 'win32'",
     "sys_platform != 'darwin' and sys_platform != 'win32'",
-    "sys_platform == 'darwin'",
+    "platform_machine != 'x86_64' and sys_platform == 'darwin'",
 ]
 dependencies = [
     { name = "cuda-bindings", marker = "(python_full_version < '3.15' and sys_platform == 'linux' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "cuda-toolkit", extra = ["cublas", "cudart", "cufft", "cufile", "cupti", "curand", "cusolver", "cusparse", "nvjitlink", "nvrtc", "nvtx"], marker = "(sys_platform == 'linux' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
-    { name = "filelock", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
-    { name = "fsspec", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
-    { name = "jinja2", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
-    { name = "networkx", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
+    { name = "filelock", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "fsspec", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "jinja2", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "networkx", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "nvidia-cudnn-cu13", marker = "(sys_platform == 'linux' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "nvidia-cusparselt-cu13", marker = "(sys_platform == 'linux' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "nvidia-nccl-cu13", marker = "(sys_platform == 'linux' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "nvidia-nvshmem-cu13", marker = "(sys_platform == 'linux' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
-    { name = "setuptools", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
-    { name = "sympy", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
+    { name = "setuptools", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "sympy", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "triton", marker = "(python_full_version < '3.15' and sys_platform == 'linux' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
-    { name = "typing-extensions", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
+    { name = "typing-extensions", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/17/76/bb4770f56cf6d8971671dbcbb7493e5a6a15ad2825f4e359b02c27c38297/torch-2.14.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:c1f844f1c750e87df4b68bc3afbc0e2b0c7ef19d7b8f666e48bdcf6a0c4f0056", size = 127303200, upload-time = "2026-09-02T13:43:20.311Z" },
@@ -1521,6 +1544,26 @@ wheels = [
 
 [[package]]
 name = "torchvision"
+version = "0.17.2"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "platform_machine == 'x86_64' and sys_platform == 'darwin'",
+]
+dependencies = [
+    { name = "numpy", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "pillow", marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torch", version = "2.2.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ff/b6/a056fb68cae15e8aec4f854f78d4787086d77efa5468a29d5b744eee2a2b/torchvision-0.17.2-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:14fd1d4a033c325bdba2d03a69c3450cab6d3a625f85cc375781d9237ca5d04d", size = 1666430, upload-time = "2024-03-27T21:11:29.158Z" },
+    { url = "https://files.pythonhosted.org/packages/58/12/0be3c13b2694ce2d103d259a4c0692884d52b0b445387101d96965d5b060/torchvision-0.17.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:9c3acbebbe379af112b62b535820174277b1f3eed30df264a4e458d58ee4e5b2", size = 1571152, upload-time = "2024-03-27T21:11:27.241Z" },
+    { url = "https://files.pythonhosted.org/packages/1c/e9/830390c704f1471c33faebe964c3ca99113e43ffc3f6653d3188ca04077c/torchvision-0.17.2-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:77d680adf6ce367166a186d2c7fda3a73807ab9a03b2c31a03fa8812c8c5335b", size = 6915847, upload-time = "2024-03-27T21:11:14.359Z" },
+    { url = "https://files.pythonhosted.org/packages/52/89/9af25236f7bc31fe74f88bde03bbd63c284d0aefa6d19bd92cc37433470c/torchvision-0.17.2-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:f1c9ab3152cfb27f83aca072cac93a3a4c4e4ab0261cf0f2d516b9868a4e96f3", size = 14008843, upload-time = "2024-03-27T21:10:59.268Z" },
+    { url = "https://files.pythonhosted.org/packages/fd/d1/8da7f30169f56764f0ef9ed961a32f300a2d782b6c1bc8b391c3014092f8/torchvision-0.17.2-cp312-cp312-win_amd64.whl", hash = "sha256:3f784381419f3ed3f2ec2aa42fb4aeec5bf4135e298d1631e41c926e6f1a0dff", size = 1165531, upload-time = "2024-03-27T21:11:22.555Z" },
+]
+
+[[package]]
+name = "torchvision"
 version = "0.29.0"
 source = { registry = "https://download.pytorch.org/whl/cpu" }
 resolution-markers = [
@@ -1547,12 +1590,12 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "sys_platform == 'win32'",
     "sys_platform != 'darwin' and sys_platform != 'win32'",
-    "sys_platform == 'darwin'",
+    "platform_machine != 'x86_64' and sys_platform == 'darwin'",
 ]
 dependencies = [
-    { name = "numpy", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
-    { name = "pillow", marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
-    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
+    { name = "numpy", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "pillow", marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a7/d2/9daad500db2ab880eca0f0a569afd73e1afdd49f22c94560c85546dd87c2/torchvision-0.29.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:994687b818cac0e6d34cb407a41458e2c3262cb7db927465841c9522ba7ebb92", size = 1813740, upload-time = "2026-09-02T13:47:03.933Z" },
@@ -1648,12 +1691,14 @@ dependencies = [
     { name = "pyyaml" },
     { name = "requests" },
     { name = "torch", version = "2.2.2", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (platform_machine != 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torch", version = "2.2.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "torch", version = "2.14.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(platform_machine != 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (platform_machine == 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
-    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
+    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "torch", version = "2.14.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "torchvision", version = "0.17.2", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (platform_machine != 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torchvision", version = "0.17.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "torchvision", version = "0.29.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(platform_machine != 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (platform_machine == 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
-    { name = "torchvision", version = "0.29.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
+    { name = "torchvision", version = "0.29.0", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "torchvision", version = "0.29.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "ultralytics-platform" },
     { name = "ultralytics-thop" },
@@ -1682,8 +1727,9 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
     { name = "torch", version = "2.2.2", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (platform_machine != 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
+    { name = "torch", version = "2.2.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'x86_64' and sys_platform == 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "torch", version = "2.14.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(platform_machine != 'x86_64' and sys_platform == 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (platform_machine == 'x86_64' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
-    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-10-plasmoscan-gpu' or extra != 'extra-10-plasmoscan-cpu'" },
+    { name = "torch", version = "2.14.0", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'x86_64' and extra != 'extra-10-plasmoscan-cpu') or (sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-gpu') or (sys_platform != 'darwin' and extra != 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
     { name = "torch", version = "2.14.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "(sys_platform != 'darwin' and extra == 'extra-10-plasmoscan-cpu') or (extra == 'extra-10-plasmoscan-cpu' and extra == 'extra-10-plasmoscan-gpu')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/45/20/d6b6aaa8ecf7dbdeaf0c05f73bdcd04cf8ce468d936bc48dbcd368e75baf/ultralytics_thop-2.1.6.tar.gz", hash = "sha256:0ec2df8ebd3db35795e1f80cdc8bce6734446dbe989bca1b0c89396353f0f08c", size = 36364, upload-time = "2026-07-30T22:31:28.143Z" }
